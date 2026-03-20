@@ -362,21 +362,6 @@
         <div class="container is-max-desktop">
           <h2 class="title is-2 has-text-centered">Experimental Results</h2>
           <div class="content">
-            <h3 class="title is-4">Previous Work - Mechanical Characterization of the neck</h3>
-            <p>
-              The mechanical characterization of the soft robotic neck was performed using an Instron 34SC-1 Universal Testing Machine (UTM). Frontal tendon pulling tests were performed for several displacements (20 mm, 40 mm and 60 mm) at various rates (2.5 mm/s, 5 mm/s, 10 mm/s and 15 mm/s) for a total of 10 loading-unloading cycles. The following figure shows the experimental setup and the results obtained from the tests. 
-            </p>
-            <div class="columns is-centered">
-              <div class="column is-full has-text-centered">
-                <figure>
-                  <img src="static/images/UTM_tests_horizontal_2.png" alt="Mechanical Characterization of the Neck" style="max-width:100%; height:auto;" />
-                  <figcaption>Figure: Mechanical characterization setup and results for the soft robotic neck. (a) Visual representation of the test performed. (b) Mechanical response of the neck at the three target displacements for the least quasi-static condition. (c) Median value for the equilibrium curve (average of the loading and unloading paths). (d) Hysteresis loop percentage of the mechanical response at the different displacements and rates.</figcaption>
-                </figure>
-              </div>
-            </div>
-            <p>
-              The material response of the system shows a mostly lineal behavior when analyzing the equilibrium curve, which leds to use a lineal elastic model or the more complete Neo-Hookean hyperelastic constitutive model. Using 
-            </p>
             <h3 class="title is-4">Volumetric Mesh Refinement</h3>
             <p>
               The volumetric mesh refinement process was performed by selecting a large mesh density set, ranging from 0 tetrahedra to 90000 tetrahedra, and testing the simulation performance when applying a sinusoidal input to the cable displacement controller. The relationship betweeen the studied parameters and the number of tetrahedra is displayed in the following figure: 
@@ -427,14 +412,68 @@
             <div class="columns is-centered">
               <div class="column is-half has-text-centered">
                 <figure>
-                  <img src="static/images/table.png" alt="Table of mesh refinement results" style="max-width:100%; height:auto;" />
+                  <img src="static/images/table.png" alt="Table of mesh refinement results" style="max-width:120%; height:auto;" />
                   <figcaption>Table: Results for mesh refinement subset (0–40000 tetrahedra).</figcaption>
+                              </figure>
+                            </div>
+                          </div>
+                          <!-- Four subfigures in one row -->
+                          <div class="columns is-centered">
+                            <div class="column is-one-quarter has-text-centered">
+                              <figure>
+                                <img src="static/images/default.png" alt="Subfigure 1" style="max-width:100%; height:auto;" />
+                                <figcaption>(a) 2363 tetrahedra</figcaption>
+                              </figure>
+                            </div>
+                            <div class="column is-one-quarter has-text-centered">
+                              <figure>
+                                <img src="static/images/9676.png" alt="Subfigure 2" style="max-width:100%; height:auto;" />
+                                <figcaption>(b) 9676 tetrahedra</figcaption>
+                              </figure>
+                            </div>
+                            <div class="column is-one-quarter has-text-centered">
+                              <figure>
+                                <img src="static/images/17k.png" alt="Subfigure 3" style="max-width:100%; height:auto;" />
+                                <figcaption>(c) 17633 tetrahedra</figcaption>
+                              </figure>
+                            </div>
+                            <div class="column is-one-quarter has-text-centered">
+                              <figure>
+                                <img src="static/images/37k.png" alt="Subfigure 4" style="max-width:100%; height:auto;" />
+                                <figcaption>(d) 37308 tetrahedra</figcaption>
+                              </figure>
+                            </div>
+                          </div>
+                </figure>
+              </div>
+            </div>
+
+            <p>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Previous Work Section (moved from Experimental Results) -->
+      <section class="section">
+        <div class="container is-max-desktop">
+          <h2 class="title is-2 has-text-centered">Previous Work</h2>
+          <div class="content">
+            <h3 class="title is-4">Mechanical Characterization of the Neck</h3>
+            <p>
+              The mechanical characterization of the soft robotic neck was performed using an Instron 34SC-1 Universal Testing Machine (UTM). Frontal tendon pulling tests were performed for several displacements (20 mm, 40 mm and 60 mm) at various rates (2.5 mm/s, 5 mm/s, 10 mm/s and 15 mm/s) for a total of 10 loading-unloading cycles. The following figure shows the experimental setup and the results obtained from the tests. 
+            </p>
+            <div class="columns is-centered">
+              <div class="column is-full has-text-centered">
+                <figure>
+                  <img src="static/images/UTM_tests_horizontal_2.png" alt="Mechanical Characterization of the Neck" style="max-width:100%; height:auto;" />
+                  <figcaption>Figure: Mechanical characterization setup and results for the soft robotic neck. (a) Visual representation of the test performed. (b) Mechanical response of the neck at the three target displacements for the least quasi-static condition. (c) Median value for the equilibrium curve (average of the loading and unloading paths). (d) Hysteresis loop percentage of the mechanical response at the different displacements and rates.</figcaption>
                 </figure>
               </div>
             </div>
             <p>
+              The material response of the system shows a mostly lineal behavior when analyzing the equilibrium curve, which leds to use a lineal elastic model or the more complete Neo-Hookean hyperelastic constitutive model. Using 
             </p>
-            </div>
           </div>
         </div>
       </section>
