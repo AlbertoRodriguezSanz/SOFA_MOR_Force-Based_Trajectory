@@ -363,54 +363,77 @@
           <h2 class="title is-2 has-text-centered">Experimental Results</h2>
           <div class="content">
             <h3 class="title is-4">Previous Work - Mechanical Characterization of the neck</h3>
+            <p>
+              The mechanical characterization of the soft robotic neck was performed using an Instron 34SC-1 Universal Testing Machine (UTM). Frontal tendon pulling tests were performed for several displacements (20 mm, 40 mm and 60 mm) at various rates (2.5 mm/s, 5 mm/s, 10 mm/s and 15 mm/s) for a total of 10 loading-unloading cycles. The following figure shows the experimental setup and the results obtained from the tests. 
+            </p>
             <div class="columns is-centered">
-              <div class="column is-half has-text-centered">
+              <div class="column is-full has-text-centered">
                 <figure>
-                  <img src="static/images/UTM_tests(1).png" alt="Mechanical Characterization of the Neck" style="max-width:100%; height:auto;" />
-                  <figcaption>Figure: Mechanical characterization setup and results for the soft robotic neck.</figcaption>
+                  <img src="static/images/UTM_tests_horizontal_2.png" alt="Mechanical Characterization of the Neck" style="max-width:100%; height:auto;" />
+                  <figcaption>Figure: Mechanical characterization setup and results for the soft robotic neck. (a) Visual representation of the test performed. (b) Mechanical response of the neck at the three target displacements for the least quasi-static condition. (c) Median value for the equilibrium curve (average of the loading and unloading paths). (d) Hysteresis loop percentage of the mechanical response at the different displacements and rates.</figcaption>
                 </figure>
               </div>
             </div>
+            <p>
+              The material response of the system shows a mostly lineal behavior when analyzing the equilibrium curve, which leds to use a lineal elastic model or the more complete Neo-Hookean hyperelastic constitutive model. Using 
+            </p>
             <h3 class="title is-4">Volumetric Mesh Refinement</h3>
+            <p>
+              The volumetric mesh refinement process was performed by selecting a large mesh density set, ranging from 0 tetrahedra to 90000 tetrahedra, and testing the simulation performance when applying a sinusoidal input to the cable displacement controller. The relationship betweeen the studied parameters and the number of tetrahedra is displayed in the following figure: 
+            </p>
             <div class="columns is-multiline is-centered">
-              <!-- First row of figures -->
-              <div class="column is-one-third has-text-centered">
+              <!-- First row: displacement, force -->
+              <div class="column is-half has-text-centered">
                 <figure>
-                  <img src="static/images/figure1.jpg" alt="Figure 1" style="max-width:100%; height:auto;" />
-                  <figcaption>Figure 1: Description</figcaption>
+                  <img src="static/images/Frontal_Amplitude_Displacement_vs_Tetrahedros.png" alt="Displacement vs Tetrahedral Elements" style="max-width:120%; height:auto;" />
+                  <figcaption>(a) Displacement vs Tetrahedral Elements</figcaption>
                 </figure>
               </div>
-              <div class="column is-one-third has-text-centered">
+              <div class="column is-half has-text-centered">
                 <figure>
-                  <img src="static/images/figure2.jpg" alt="Figure 2" style="max-width:100%; height:auto;" />
-                  <figcaption>Figure 2: Description</figcaption>
+                  <img src="static/images/Frontal_Amplitude_Force_vs_Tetrahedros.png" alt="Force vs Tetrahedral Elements" style="max-width:120%; height:auto;" />
+                  <figcaption>(b) Force vs Tetrahedral Elements</figcaption>
                 </figure>
               </div>
-              <div class="column is-one-third has-text-centered">
+              <!-- Second row: roll, pitch -->
+              <div class="column is-half has-text-centered">
                 <figure>
-                  <img src="static/images/figure3.jpg" alt="Figure 3" style="max-width:100%; height:auto;" />
-                  <figcaption>Figure 3: Description</figcaption>
+                  <img src="static/images/Frontal_Amplitude_Roll_vs_Tetrahedros.png" alt="Roll vs Tetrahedral Elements" style="max-width:120%; height:auto;" />
+                  <figcaption>(c) Roll vs Tetrahedral Elements</figcaption>
                 </figure>
               </div>
-              <!-- Second row of figures -->
-              <div class="column is-one-third has-text-centered">
+              <div class="column is-half has-text-centered">
                 <figure>
-                  <img src="static/images/figure4.jpg" alt="Figure 4" style="max-width:100%; height:auto;" />
-                  <figcaption>Figure 4: Description</figcaption>
+                  <img src="static/images/Frontal_Amplitude_Pitch_vs_Tetrahedros.png" alt="Pitch vs Tetrahedral Elements" style="max-width:120%; height:auto;" />
+                  <figcaption>(d) Pitch vs Tetrahedral Elements</figcaption>
                 </figure>
               </div>
-              <div class="column is-one-third has-text-centered">
+              <!-- Third row: yaw, time -->
+              <div class="column is-half has-text-centered">
                 <figure>
-                  <img src="static/images/figure5.jpg" alt="Figure 5" style="max-width:100%; height:auto;" />
-                  <figcaption>Figure 5: Description</figcaption>
+                  <img src="static/images/Frontal_Amplitude_Yaw_vs_Tetrahedros.png" alt="Yaw vs Tetrahedral Elements" style="max-width:120%; height:auto;" />
+                  <figcaption>(e) Yaw vs Tetrahedral Elements</figcaption>
                 </figure>
               </div>
-              <div class="column is-one-third has-text-centered">
+              <div class="column is-half has-text-centered">
                 <figure>
-                  <img src="static/images/figure6.jpg" alt="Figure 6" style="max-width:100%; height:auto;" />
-                  <figcaption>Figure 6: Description</figcaption>
+                  <img src="static/images/Frontal_realTime_vs_Tetrahedros.png" alt="Time vs Tetrahedral Elements" style="max-width:120%; height:auto;" />
+                  <figcaption>(f) Real Time vs Tetrahedral Elements</figcaption>
                 </figure>
               </div>
+            <p>
+              After studying the results obtained we analyized a smaller subset of elements within the first third of the curve, meaning they were running at a reasonable frame rate to perform real time or quasi-real time control. The following figure table the results obtained for the subset of elements between 0 and 40000 tetrahedra:
+            </p>
+            <div class="columns is-centered">
+              <div class="column is-half has-text-centered">
+                <figure>
+                  <img src="static/images/table.png" alt="Table of mesh refinement results" style="max-width:100%; height:auto;" />
+                  <figcaption>Table: Results for mesh refinement subset (0–40000 tetrahedra).</figcaption>
+                </figure>
+              </div>
+            </div>
+            <p>
+            </p>
             </div>
           </div>
         </div>
