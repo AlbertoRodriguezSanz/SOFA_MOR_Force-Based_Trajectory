@@ -85,14 +85,13 @@
   <link rel="stylesheet" href="static/css/index.css">
   
   <!-- Non-critical CSS - Load asynchronously -->
-  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   
   <!-- Fallback for browsers that don't support preload -->
   <noscript>
-    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    
     <link rel="stylesheet" href="static/css/bulma-slider.min.css">
     <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
@@ -105,7 +104,7 @@
   <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
   <script defer src="static/js/fontawesome.all.min.js"></script>
-  <script defer src="static/js/bulma-carousel.min.js"></script>
+  
   <script defer src="static/js/bulma-slider.min.js"></script>
   <script defer src="static/js/index.js"></script>
   
@@ -143,7 +142,7 @@
     "image": "https://YOUR_DOMAIN.com/static/images/social_preview.png",
     "keywords": ["KEYWORD1", "KEYWORD2", "KEYWORD3", "machine learning", "computer vision"],
     "abstract": "FULL_ABSTRACT_TEXT_HERE",
-    "citation": "BIBTEX_CITATION_HERE",
+    
     "isAccessibleForFree": true,
     "license": "https://creativecommons.org/licenses/by/4.0/",
     "mainEntity": {
@@ -314,26 +313,31 @@
     </section>
 
     <!-- Paper abstract (moved above video) -->
-    <section class="section hero is-light">
+      <!-- Image above abstract -->
       <div class="container is-max-desktop">
         <div class="columns is-centered has-text-centered">
           <div class="column is-four-fifths">
-            <h2 class="title is-3">Abstract</h2>
-            <div class="content has-text-justified">
-              <!-- TODO: Replace with your paper abstract -->
-              <p>
-                Soft robots enable safe, adaptive interaction, but their large deformations and nonlinear material behavior complicate online planning. While the high-fidelity finite element method (FEM) can capture these effects, its computational cost often precludes real-time use. This paper presents an end-to-end workflow for a cable-driven soft robotic link that features a force-aware online local planner powered by a reduced-order model (ROM) SOFA digital twin. Starting from a kinematically converged volumetric mesh, we apply projection-based model order reduction with hyper-reduction of internal force evaluation to obtain a computationally lightweight model that preserves dominant spatial deformations. This highly efficient digital twin is then embedded into an energy-aware local planner that evaluates candidate cable commands in parallel, utilizing a graph-guided shortest-path search to dynamically adapt its sampling distribution. Benchmarking results demonstrate that the reduced model substantially decreases per-iteration planning latency compared to the full-order model (FOM), preserving physical consistency and task-level convergence to successfully enable real-time online planning under actuation constraints.
-              </p>
-            </div>
-            <!-- New image under abstract -->
-            <div class="has-text-centered" style="margin-top: 2rem;">
-              <!-- TODO: Replace with your image path and alt text -->
-              <img src="static/images/diagram2.jpg" alt="Abstract illustration" style="max-width: 100%; height: auto;" />
-            </div>
+            <img src="static/images/diagram2.jpg" alt="Abstract illustration" style="max-width: 100%; height: auto; margin-top: 2rem; margin-bottom: 2rem;" />
           </div>
         </div>
       </div>
-    </section>
+      <section class="section hero is-light">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered has-text-centered">
+            <div class="column is-four-fifths">
+              <h2 class="title is-3">Abstract</h2>
+              <div class="content has-text-justified">
+                <!-- TODO: Replace with your paper abstract -->
+                <p>
+                  Soft robots enable safe, adaptive interaction, but their large deformations and nonlinear material behavior complicate online planning. While the high-fidelity finite element method (FEM) can capture these effects, its computational cost often precludes real-time use. This paper presents an end-to-end workflow for a cable-driven soft robotic link that features a force-aware online local planner powered by a reduced-order model (ROM) SOFA digital twin. Starting from a kinematically converged volumetric mesh, we apply projection-based model order reduction with hyper-reduction of internal force evaluation to obtain a computationally lightweight model that preserves dominant spatial deformations. This highly efficient digital twin is then embedded into an energy-aware local planner that evaluates candidate cable commands in parallel, utilizing a graph-guided shortest-path search to dynamically adapt its sampling distribution. Benchmarking results demonstrate that the reduced model substantially decreases per-iteration planning latency compared to the full-order model (FOM), preserving physical consistency and task-level convergence to successfully enable real-time online planning under actuation constraints.
+                </p>
+              </div>
+              <!-- New image under abstract -->
+            
+            </div>
+          </div>
+        </div>
+      </section>
 
     <!-- Teaser video (now below abstract) -->
     <section class="hero teaser">
@@ -342,137 +346,88 @@
           <!-- TODO: Replace with your teaser video -->
           <video poster="" id="tree" autoplay controls muted loop height="100%" preload="metadata">
             <!-- TODO: Add your video file path here -->
-            <source src="static/videos/banner_video.mp4" type="video/mp4">
+            <source src="static/videos/iros2026_video.mp4" type="video/mp4">
           </video>
           <!-- TODO: Replace with your video description -->
           <h2 class="subtitle has-text-centered">
-            Aliquam vitae elit ullamcorper tellus egestas pellentesque. Ut lacus tellus, maximus vel lectus at, placerat pretium mi. Maecenas dignissim tincidunt vestibulum. Sed consequat hendrerit nisl ut maximus. 
+            Example video showing the workflow proposed in the paper for defining the reduced volumetric mesh which allows real-time force-based inverse kinematics for a robotic soft neck. 
           </h2>
         </div>
       </div>
     </section>
     <!-- End teaser video -->
-  º
 
-<!-- 
-<!-- Image carousel -->
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="results-carousel" class="carousel results-carousel">
-       <div class="item">
-        <!-- TODO: Replace with your research result images -->
-        <img src="static/images/carousel1.jpg" alt="First research result visualization" loading="lazy"/>
-        <!-- TODO: Replace with description of this result -->
-        <h2 class="subtitle has-text-centered">
-          First image description.
-        </h2>
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel2.jpg" alt="Second research result visualization" loading="lazy"/>
-        <h2 class="subtitle has-text-centered">
-          Second image description.
-        </h2>
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel3.jpg" alt="Third research result visualization" loading="lazy"/>
-        <h2 class="subtitle has-text-centered">
-         Third image description.
-       </h2>
-     </div>
-     <div class="item">
-      <!-- Your image here -->
-      <img src="static/images/carousel4.jpg" alt="Fourth research result visualization" loading="lazy"/>
-      <h2 class="subtitle has-text-centered">
-        Fourth image description.
-      </h2>
-    </div>
-  </div>
-</div>
-</div>
-</section>
-End image carousel -->
-
-
-
-
-<!-- Youtube video -->
-<section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <!-- Paper video. -->
-      <h2 class="title is-3">Video Presentation</h2>
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          
-          <div class="publication-video">
-            <!-- TODO: Replace with your YouTube video ID -->
-            <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <!-- Experimental Results Section -->
+      <section class="section">
+        <div class="container is-max-desktop">
+          <h2 class="title is-2 has-text-centered">Experimental Results</h2>
+          <div class="content">
+            <h3 class="title is-4">Previous Work - Mechanical Characterization of the neck</h3>
+            <div class="columns is-centered">
+              <div class="column is-half has-text-centered">
+                <figure>
+                  <img src="static/images/UTM_tests(1).png" alt="Mechanical Characterization of the Neck" style="max-width:100%; height:auto;" />
+                  <figcaption>Figure: Mechanical characterization setup and results for the soft robotic neck.</figcaption>
+                </figure>
+              </div>
+            </div>
+            <h3 class="title is-4">Volumetric Mesh Refinement</h3>
+            <div class="columns is-multiline is-centered">
+              <!-- First row of figures -->
+              <div class="column is-one-third has-text-centered">
+                <figure>
+                  <img src="static/images/figure1.jpg" alt="Figure 1" style="max-width:100%; height:auto;" />
+                  <figcaption>Figure 1: Description</figcaption>
+                </figure>
+              </div>
+              <div class="column is-one-third has-text-centered">
+                <figure>
+                  <img src="static/images/figure2.jpg" alt="Figure 2" style="max-width:100%; height:auto;" />
+                  <figcaption>Figure 2: Description</figcaption>
+                </figure>
+              </div>
+              <div class="column is-one-third has-text-centered">
+                <figure>
+                  <img src="static/images/figure3.jpg" alt="Figure 3" style="max-width:100%; height:auto;" />
+                  <figcaption>Figure 3: Description</figcaption>
+                </figure>
+              </div>
+              <!-- Second row of figures -->
+              <div class="column is-one-third has-text-centered">
+                <figure>
+                  <img src="static/images/figure4.jpg" alt="Figure 4" style="max-width:100%; height:auto;" />
+                  <figcaption>Figure 4: Description</figcaption>
+                </figure>
+              </div>
+              <div class="column is-one-third has-text-centered">
+                <figure>
+                  <img src="static/images/figure5.jpg" alt="Figure 5" style="max-width:100%; height:auto;" />
+                  <figcaption>Figure 5: Description</figcaption>
+                </figure>
+              </div>
+              <div class="column is-one-third has-text-centered">
+                <figure>
+                  <img src="static/images/figure6.jpg" alt="Figure 6" style="max-width:100%; height:auto;" />
+                  <figcaption>Figure 6: Description</figcaption>
+                </figure>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End youtube video -->
+      </section>
 
 
-<!-- Video carousel -->
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3">Another Carousel</h2>
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-video1">
-          <!-- TODO: Add poster image for better preview -->
-          <video poster="" id="video1" controls muted loop height="100%" preload="metadata">
-            <!-- Your video file here -->
-            <source src="static/videos/carousel1.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video2">
-          <!-- TODO: Add poster image for better preview -->
-          <video poster="" id="video2" controls muted loop height="100%" preload="metadata">
-            <!-- Your video file here -->
-            <source src="static/videos/carousel2.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video3">
-          <!-- TODO: Add poster image for better preview -->
-          <video poster="" id="video3" controls muted loop height="100%" preload="metadata">
-            <!-- Your video file here -->
-            <source src="static/videos/carousel3.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End video carousel -->
 
 
-<!--BibTex citation -->
-  <section class="section" id="BibTeX">
-    <div class="container is-max-desktop content">
-      <div class="bibtex-header">
-        <h2 class="title">BibTeX</h2>
-        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
-          <i class="fas fa-copy"></i>
-          <span class="copy-text">Copy</span>
-        </button>
-      </div>
-      <pre id="bibtex-code"><code>@article{YourPaperKey2024,
-  title={Your Paper Title Here},
-  author={First Author and Second Author and Third Author},
-  journal={Conference/Journal Name},
-  year={2024},
-  url={https://your-domain.com/your-project-page}
-}</code></pre>
-    </div>
-</section>
-<!--End BibTex citation -->
+
+
+
+
+
+
+
+
+
 
 
   <footer class="footer">
