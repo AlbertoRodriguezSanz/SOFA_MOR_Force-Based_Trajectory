@@ -331,18 +331,81 @@ function appendSelectOption(selectEl, value, label) {
     selectEl.appendChild(option);
 }
 
-function formatParamsInline(paramsObj) {
-    if (!paramsObj || typeof paramsObj !== 'object') return '-';
-    const keys = Object.keys(paramsObj);
-    if (keys.length === 0) return '-';
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
 
-    return keys.map(function(key) {
-        const value = paramsObj[key];
-        if (typeof value === 'number') {
-            return key + '=' + value.toFixed(3);
-        }
-        return key + '=' + String(value);
-    }).join(', ');
+function formatParamValue(value) {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return value.toFixed(3);
+    }
+    return String(value);
+}
+
+function parameterSortOrder(name) {
+    const order = [
+        'alpha_g',
+        'beta_g',
+        'push_ratio',
+        'push_alpha',
+        'push_beta',
+        'path_ratio',
+        'path_sigma_scale',
+        'sigma_gain',
+        'sigma_bias',
+        'sigma_eta'
+    ];
+    const idx = order.indexOf(String(name));
+    return idx === -1 ? 999 : idx;
+}
+
+function sortedParamEntries(paramsObj) {
+    const source = (paramsObj && typeof paramsObj === 'object') ? paramsObj : {};
+    return Object.keys(source)
+        .sort(function(a, b) {
+            const da = parameterSortOrder(a);
+            const db = parameterSortOrder(b);
+            if (da !== db) return da - db;
+            return a.localeCompare(b);
+        })
+        .map(function(key) {
+            return [key, source[key]];
+        });
+}
+
+function buildParamsRowsHtml(studyFixedParams, experimentParams) {
+    const rows = [];
+    sortedParamEntries(studyFixedParams).forEach(function(entry) {
+        rows.push({
+            scope: 'Fixed',
+            key: entry[0],
+            value: entry[1]
+        });
+    });
+    sortedParamEntries(experimentParams).forEach(function(entry) {
+        rows.push({
+            scope: 'Experiment',
+            key: entry[0],
+            value: entry[1]
+        });
+    });
+
+    if (rows.length === 0) {
+        return '<tr><td class="planner-param-value" colspan="3">No parameters declared.</td></tr>';
+    }
+
+    return rows.map(function(row) {
+        return '<tr>' +
+            '<td class="planner-param-name">' + escapeHtml(row.key) + '</td>' +
+            '<td class="planner-param-value">' + escapeHtml(formatParamValue(row.value)) + '</td>' +
+            '<td class="planner-param-scope">' + escapeHtml(row.scope) + '</td>' +
+            '</tr>';
+    }).join('');
 }
 
 function setPlannerExperimentSummary(study, experiment) {
@@ -350,16 +413,37 @@ function setPlannerExperimentSummary(study, experiment) {
     if (!summary) return;
 
     if (!study || !experiment) {
-        summary.textContent = 'No experiment selected.';
+        summary.innerHTML = '<p class="planner-summary-empty">No experiment selected.</p>';
         return;
     }
 
-    const fixedText = formatParamsInline(study.fixed_params);
-    const variableText = formatParamsInline(experiment.params);
-    summary.textContent =
-        study.label + ' | ' + experiment.label +
-        ' | Fixed: ' + fixedText +
-        ' | Experiment: ' + variableText;
+    const studyLabel = study.label || '-';
+    const experimentLabel = experiment.label || '-';
+    const studyDescription = study.description ? String(study.description) : '';
+    const paramsRowsHtml = buildParamsRowsHtml(study.fixed_params, experiment.params);
+
+    summary.innerHTML =
+        '<div class="planner-summary-header">' +
+            '<div class="planner-summary-chip">' +
+                '<span class="planner-summary-label">Study Group</span>' +
+                '<strong>' + escapeHtml(studyLabel) + '</strong>' +
+            '</div>' +
+            '<div class="planner-summary-chip">' +
+                '<span class="planner-summary-label">Experiment</span>' +
+                '<strong>' + escapeHtml(experimentLabel) + '</strong>' +
+            '</div>' +
+        '</div>' +
+        (studyDescription ? '<p class="planner-summary-description">' + escapeHtml(studyDescription) + '</p>' : '') +
+        '<table class="planner-params-table" aria-label="Experiment parameter summary">' +
+            '<thead>' +
+                '<tr>' +
+                    '<th>Parameter</th>' +
+                    '<th>Value</th>' +
+                    '<th>Scope</th>' +
+                '</tr>' +
+            '</thead>' +
+            '<tbody>' + paramsRowsHtml + '</tbody>' +
+        '</table>';
 }
 
 function ensurePlannerSelectors(manifest) {
@@ -550,7 +634,7 @@ function buildPathTraces(points) {
         {
             type: 'scatter3d',
             mode: 'lines',
-            name: 'Path (replay)',
+            name: 'Path',
             x: x,
             y: y,
             z: zOffset,
@@ -786,14 +870,14 @@ async function renderPlannerPlots() {
         await Plotly.newPlot(
             'plot-cost-cloud',
             [costCloudTrace].concat(pathTraces),
-            buildCloudLayout('Cost Cloud + Replay Path'),
+            buildCloudLayout('3D Cost Field with Optimal Trajectory'),
             PLOTLY_CONFIG
         );
 
         await Plotly.newPlot(
             'plot-force-cloud',
             [forceCloudTrace].concat(pathTraces),
-            buildCloudLayout('Force Cloud + Replay Path'),
+            buildCloudLayout('Cable Actuation Cost Cloud'),
             PLOTLY_CONFIG
         );
 
