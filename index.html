@@ -342,44 +342,7 @@
         </div>
       </section>
 
-    <section class="Preview Work: Mechanical Characterization">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered has-text-centered">
-          <div class="column is-four-fifths">
-            <h2 class="title is-3">Preview Work: Mechanical Characterization</h2>
-            <div class="content has-text-justified">
-              <!-- TODO: Replace with your paper abstract -->
-              <p>
-                To achieve similar behavior in the FEM-based model, it is necessary to identify the appropriate constitutive model and properly calibrate its parameters. 
-                In this section, we present the results of the material characterization.              </p>
-            </div>
-            <!-- New image under abstract -->
-          
-          </div>
-        </div>
-      </div>
-    </section>
 
-
-    <section class="Experimental Result">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered has-text-centered">
-          <div class="column is-four-fifths">
-            <h2 class="title is-3">Experimental Results</h2>
-            <div class="content has-text-justified">
-              <!-- TODO: Replace with your paper abstract -->
-              <p>
-                In this section, we show the impact of each parameter of the algorithm.
-              </p>
-
-              
-            </div>
-            <!-- New image under abstract -->
-            
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Teaser video (now below abstract) -->
     <section class="hero teaser">
@@ -496,35 +459,51 @@
         </div>
       </section>
 
-      <!-- Previous Work Section (moved from Experimental Results) -->
-      <section class="section">
-        <div class="container is-max-desktop">
-          <h2 class="title is-2 has-text-centered">Previous Work</h2>
-          <div class="content">
-            <h3 class="title is-4">Mechanical Characterization of the Neck</h3>
-            <p>
-              The mechanical characterization of the soft robotic neck was performed using an Instron 34SC-1 Universal Testing Machine (UTM). Frontal tendon pulling tests were performed for several displacements (20 mm, 40 mm and 60 mm) at various rates (2.5 mm/s, 5 mm/s, 10 mm/s and 15 mm/s) for a total of 10 loading-unloading cycles. The following figure shows the experimental setup and the results obtained from the tests. 
-            </p>
-            <div class="columns is-centered">
-              <div class="column is-full has-text-centered">
-                <figure>
-                  <img src="static/images/UTM_tests_horizontal_2.png" alt="Mechanical Characterization of the Neck" style="max-width:100%; height:auto;" />
-                  <figcaption>Figure: Mechanical characterization setup and results for the soft robotic neck. (a) Visual representation of the test performed. (b) Mechanical response of the neck at the three target displacements for the least quasi-static condition. (c) Median value for the equilibrium curve (average of the loading and unloading paths). (d) Hysteresis loop percentage of the mechanical response at the different displacements and rates.</figcaption>
-                </figure>
-              </div>
-            </div>
-            <p>
-              The material response of the system shows a mostly lineal behavior when analyzing the equilibrium curve, which leds to use a lineal elastic model or the more complete Neo-Hookean hyperelastic constitutive model. Using 
-            </p>
-          </div>
-        </div>
-      </section>
-
       <section class="section planner-plots-section">
         <div class="container is-max-desktop">
-          <h2 class="title is-2 has-text-centered">Interactive Planner Plots</h2>
+          <h2 class="title is-2 has-text-centered">Online Graph-Guided Optimization with Adaptive Sampling</h2>
           <p class="has-text-centered planner-plots-subtitle">
-            Cost and force clouds with replay path, plus cable inputs and cable velocities over time.
+            This section is organized in two experiment groups: graph search tuning and adaptive sampling tuning.
+          </p>
+
+          <div class="columns is-multiline planner-study-grid">
+            <div class="column is-half">
+              <article class="planner-study-card">
+                <h3 class="title is-5">1) Graph Parameters</h3>
+                <p>
+                  We vary <strong>alpha_G</strong> and <strong>beta_G</strong> to analyze how the graph cost balance affects path selection.
+                </p>
+                <p>
+                  Fixed sampling setup for this study: <code>push_ratio=0.20</code>, <code>push_alpha=0.50</code>, <code>push_beta=0.80</code>.
+                </p>
+              </article>
+            </div>
+            <div class="column is-half">
+              <article class="planner-study-card">
+                <h3 class="title is-5">2) Adaptive Sampling</h3>
+                <p>
+                  We keep graph weights fixed at <strong>alpha_G=0.50</strong> and <strong>beta_G=0.50</strong>, and vary sampling parameters.
+                </p>
+                <p>
+                  Parameters swept in this block: <code>push_ratio</code>, <code>push_alpha</code>, and <code>push_beta</code>.
+                </p>
+              </article>
+            </div>
+          </div>
+
+          <div class="planner-experiment-controls">
+            <div class="planner-control">
+              <label for="planner-study-select">Study Group</label>
+              <select id="planner-study-select" class="planner-select"></select>
+            </div>
+            <div class="planner-control">
+              <label for="planner-experiment-select">Experiment</label>
+              <select id="planner-experiment-select" class="planner-select"></select>
+            </div>
+          </div>
+
+          <p id="planner-experiment-summary" class="planner-experiment-summary">
+            Select an experiment to load its JSON cloud and trajectory files.
           </p>
           <p id="planner-plots-status" class="has-text-centered planner-plots-status">Loading plots...</p>
 
@@ -556,6 +535,31 @@
           </div>
         </div>
       </section>
+      <!-- Previous Work Section (moved from Experimental Results) -->
+      <section class="section">
+        <div class="container is-max-desktop">
+          <h2 class="title is-2 has-text-centered">Previous Work</h2>
+          <div class="content">
+            <h3 class="title is-4">Mechanical Characterization of the Neck</h3>
+            <p>
+              The mechanical characterization of the soft robotic neck was performed using an Instron 34SC-1 Universal Testing Machine (UTM). Frontal tendon pulling tests were performed for several displacements (20 mm, 40 mm and 60 mm) at various rates (2.5 mm/s, 5 mm/s, 10 mm/s and 15 mm/s) for a total of 10 loading-unloading cycles. The following figure shows the experimental setup and the results obtained from the tests. 
+            </p>
+            <div class="columns is-centered">
+              <div class="column is-full has-text-centered">
+                <figure>
+                  <img src="static/images/UTM_tests_horizontal_2.png" alt="Mechanical Characterization of the Neck" style="max-width:100%; height:auto;" />
+                  <figcaption>Figure: Mechanical characterization setup and results for the soft robotic neck. (a) Visual representation of the test performed. (b) Mechanical response of the neck at the three target displacements for the least quasi-static condition. (c) Median value for the equilibrium curve (average of the loading and unloading paths). (d) Hysteresis loop percentage of the mechanical response at the different displacements and rates.</figcaption>
+                </figure>
+              </div>
+            </div>
+            <p>
+              The material response of the system shows a mostly lineal behavior when analyzing the equilibrium curve, which leds to use a lineal elastic model or the more complete Neo-Hookean hyperelastic constitutive model. Using 
+            </p>
+          </div>
+        </div>
+      </section>
+
+
 
 
 

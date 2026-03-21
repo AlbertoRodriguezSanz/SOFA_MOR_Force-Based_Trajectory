@@ -136,10 +136,95 @@ const PLOTLY_CONFIG = {
 };
 
 const COST_COLOR_SCALE = [
-    [0.0, '#2456A6'],
-    [0.5, '#1FA6B5'],
-    [1.0, '#2BB673']
+    [0.0, '#1E2A78'],
+    [0.2, '#2449A4'],
+    [0.4, '#1B74B7'],
+    [0.6, '#1E9DB7'],
+    [0.8, '#33BEA0'],
+    [1.0, '#58D27F']
 ];
+
+const CAM_ELEV = -10;
+const CAM_AZIM = 36;
+const CAM_ROLL = 90;
+const CAM_DISTANCE = 2.8;
+
+const CLOUD_POINT_SIZE = 3;
+const CLOUD_POINT_OPACITY = 1.0;
+const PATH_Z_OFFSET = 0.0015;
+const PATH_LINE_WIDTH = 7;
+const PATH_LINE_OUTLINE_WIDTH = 11;
+
+let plannerManifestCache = null;
+let plannerUiBound = false;
+
+function degToRad(angle) {
+    return angle * Math.PI / 180;
+}
+
+function vecNorm(v) {
+    return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+}
+
+function vecNormalize(v) {
+    const n = vecNorm(v);
+    if (n < 1e-9) return [0, 0, 0];
+    return [v[0] / n, v[1] / n, v[2] / n];
+}
+
+function vecCross(a, b) {
+    return [
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0]
+    ];
+}
+
+function vecDot(a, b) {
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+function rotateVectorAroundAxis(v, axisUnit, angleRad) {
+    const c = Math.cos(angleRad);
+    const s = Math.sin(angleRad);
+    const kDotV = vecDot(axisUnit, v);
+    const kCrossV = vecCross(axisUnit, v);
+
+    return [
+        v[0] * c + kCrossV[0] * s + axisUnit[0] * kDotV * (1 - c),
+        v[1] * c + kCrossV[1] * s + axisUnit[1] * kDotV * (1 - c),
+        v[2] * c + kCrossV[2] * s + axisUnit[2] * kDotV * (1 - c)
+    ];
+}
+
+function cameraFromMatplotlib(elevDeg, azimDeg, rollDeg, distance) {
+    const el = degToRad(elevDeg);
+    const az = degToRad(azimDeg);
+    const roll = degToRad(rollDeg);
+
+    const eye = [
+        distance * Math.cos(el) * Math.cos(az),
+        distance * Math.cos(el) * Math.sin(az),
+        distance * Math.sin(el)
+    ];
+
+    const forward = vecNormalize([-eye[0], -eye[1], -eye[2]]);
+    const worldUp = [0, 0, 1];
+
+    let right = vecNormalize(vecCross(forward, worldUp));
+    if (vecNorm(right) < 1e-9) {
+        right = vecNormalize(vecCross(forward, [0, 1, 0]));
+    }
+
+    const upBase = vecNormalize(vecCross(right, forward));
+    const up = vecNormalize(rotateVectorAroundAxis(upBase, forward, roll));
+
+    return {
+        eye: { x: eye[0], y: eye[1], z: eye[2] },
+        center: { x: 0, y: 0, z: 0 },
+        up: { x: up[0], y: up[1], z: up[2] }
+    };
+}
 
 function setPlannerPlotsStatus(message, isError) {
     const status = document.getElementById('planner-plots-status');
@@ -151,6 +236,221 @@ function setPlannerPlotsStatus(message, isError) {
     } else {
         status.classList.remove('is-error');
     }
+}
+
+function normalizeLegacyManifest(dataSources) {
+    const cloud = dataSources && dataSources.cloud ? dataSources.cloud : DEFAULT_PLOT_DATA_FILES.cloud;
+    const trajectories = dataSources && dataSources.trajectories ? dataSources.trajectories : DEFAULT_PLOT_DATA_FILES.trajectories;
+
+    return {
+        version: 1,
+        active_study: 'default',
+        active_experiment: 'default_run',
+        studies: {
+            'default': {
+                label: 'Default Study',
+                fixed_params: {},
+                experiments: [
+                    {
+                        id: 'default_run',
+                        label: 'Default Run',
+                        cloud: cloud,
+                        trajectories: trajectories,
+                        params: {}
+                    }
+                ]
+            }
+        }
+    };
+}
+
+function normalizePlotManifest(rawManifest) {
+    if (!rawManifest || typeof rawManifest !== 'object') {
+        return normalizeLegacyManifest(DEFAULT_PLOT_DATA_FILES);
+    }
+
+    if (rawManifest.cloud && rawManifest.trajectories) {
+        return normalizeLegacyManifest(rawManifest);
+    }
+
+    if (!rawManifest.studies || typeof rawManifest.studies !== 'object') {
+        return normalizeLegacyManifest(DEFAULT_PLOT_DATA_FILES);
+    }
+
+    const studies = {};
+    Object.keys(rawManifest.studies).forEach(function(studyKey) {
+        const sourceStudy = rawManifest.studies[studyKey] || {};
+        const sourceExperiments = Array.isArray(sourceStudy.experiments) ? sourceStudy.experiments : [];
+        const experiments = [];
+
+        sourceExperiments.forEach(function(experiment, index) {
+            if (!experiment || !experiment.cloud || !experiment.trajectories) return;
+
+            experiments.push({
+                id: String(experiment.id || ('exp_' + index)),
+                label: String(experiment.label || experiment.id || ('Experiment ' + (index + 1))),
+                cloud: String(experiment.cloud),
+                trajectories: String(experiment.trajectories),
+                params: (experiment.params && typeof experiment.params === 'object') ? experiment.params : {},
+                enabled: experiment.enabled !== false
+            });
+        });
+
+        studies[studyKey] = {
+            label: String(sourceStudy.label || studyKey),
+            description: String(sourceStudy.description || ''),
+            fixed_params: (sourceStudy.fixed_params && typeof sourceStudy.fixed_params === 'object') ? sourceStudy.fixed_params : {},
+            experiments: experiments
+        };
+    });
+
+    return {
+        version: rawManifest.version || 2,
+        active_study: rawManifest.active_study || '',
+        active_experiment: rawManifest.active_experiment || '',
+        studies: studies
+    };
+}
+
+function studyKeys(manifest) {
+    return Object.keys((manifest && manifest.studies) ? manifest.studies : {});
+}
+
+function visibleExperiments(study) {
+    const all = Array.isArray(study && study.experiments) ? study.experiments : [];
+    const enabled = all.filter(function(experiment) {
+        return experiment && experiment.enabled !== false;
+    });
+    return enabled.length > 0 ? enabled : all;
+}
+
+function appendSelectOption(selectEl, value, label) {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = label;
+    selectEl.appendChild(option);
+}
+
+function formatParamsInline(paramsObj) {
+    if (!paramsObj || typeof paramsObj !== 'object') return '-';
+    const keys = Object.keys(paramsObj);
+    if (keys.length === 0) return '-';
+
+    return keys.map(function(key) {
+        const value = paramsObj[key];
+        if (typeof value === 'number') {
+            return key + '=' + value.toFixed(3);
+        }
+        return key + '=' + String(value);
+    }).join(', ');
+}
+
+function setPlannerExperimentSummary(study, experiment) {
+    const summary = document.getElementById('planner-experiment-summary');
+    if (!summary) return;
+
+    if (!study || !experiment) {
+        summary.textContent = 'No experiment selected.';
+        return;
+    }
+
+    const fixedText = formatParamsInline(study.fixed_params);
+    const variableText = formatParamsInline(experiment.params);
+    summary.textContent =
+        study.label + ' | ' + experiment.label +
+        ' | Fixed: ' + fixedText +
+        ' | Experiment: ' + variableText;
+}
+
+function ensurePlannerSelectors(manifest) {
+    const studySelect = document.getElementById('planner-study-select');
+    const experimentSelect = document.getElementById('planner-experiment-select');
+    if (!studySelect || !experimentSelect) return;
+
+    const keys = studyKeys(manifest);
+    if (keys.length === 0) return;
+
+    const previousStudyValue = studySelect.value;
+    const previousExperimentValue = experimentSelect.value;
+
+    studySelect.innerHTML = '';
+    keys.forEach(function(key) {
+        const label = manifest.studies[key].label || key;
+        appendSelectOption(studySelect, key, label);
+    });
+
+    let selectedStudyKey = (previousStudyValue && keys.indexOf(previousStudyValue) !== -1) ? previousStudyValue : '';
+    if (!selectedStudyKey) {
+        selectedStudyKey = (manifest.active_study && keys.indexOf(manifest.active_study) !== -1) ? manifest.active_study : keys[0];
+    }
+    studySelect.value = selectedStudyKey;
+
+    const selectedStudy = manifest.studies[selectedStudyKey];
+    const experiments = visibleExperiments(selectedStudy);
+    experimentSelect.innerHTML = '';
+
+    experiments.forEach(function(experiment) {
+        appendSelectOption(experimentSelect, experiment.id, experiment.label);
+    });
+
+    let selectedExperimentId = '';
+    const availableIds = experiments.map(function(experiment) { return experiment.id; });
+    if (previousExperimentValue && availableIds.indexOf(previousExperimentValue) !== -1) {
+        selectedExperimentId = previousExperimentValue;
+    } else if (manifest.active_experiment && availableIds.indexOf(manifest.active_experiment) !== -1) {
+        selectedExperimentId = manifest.active_experiment;
+    } else if (experiments.length > 0) {
+        selectedExperimentId = experiments[0].id;
+    }
+    experimentSelect.value = selectedExperimentId;
+
+    if (!plannerUiBound) {
+        studySelect.addEventListener('change', function() {
+            renderPlannerPlots();
+        });
+        experimentSelect.addEventListener('change', function() {
+            renderPlannerPlots();
+        });
+        plannerUiBound = true;
+    }
+}
+
+function selectedStudyAndExperiment(manifest) {
+    const keys = studyKeys(manifest);
+    if (keys.length === 0) {
+        throw new Error('Manifest has no studies.');
+    }
+
+    const studySelect = document.getElementById('planner-study-select');
+    const experimentSelect = document.getElementById('planner-experiment-select');
+
+    let studyKey = (studySelect && studySelect.value && keys.indexOf(studySelect.value) !== -1)
+        ? studySelect.value
+        : ((manifest.active_study && keys.indexOf(manifest.active_study) !== -1) ? manifest.active_study : keys[0]);
+
+    const study = manifest.studies[studyKey];
+    const experiments = visibleExperiments(study);
+    if (experiments.length === 0) {
+        throw new Error('Study "' + studyKey + '" has no enabled experiments.');
+    }
+
+    const experimentIds = experiments.map(function(experiment) { return experiment.id; });
+    let experimentId = (experimentSelect && experimentSelect.value && experimentIds.indexOf(experimentSelect.value) !== -1)
+        ? experimentSelect.value
+        : ((manifest.active_experiment && experimentIds.indexOf(manifest.active_experiment) !== -1) ? manifest.active_experiment : experiments[0].id);
+
+    const experiment = experiments.find(function(item) {
+        return item.id === experimentId;
+    }) || experiments[0];
+
+    if (studySelect) studySelect.value = studyKey;
+    if (experimentSelect) experimentSelect.value = experiment.id;
+
+    return {
+        study_key: studyKey,
+        study: study,
+        experiment: experiment
+    };
 }
 
 function trajectoryByName(trajectories, name) {
@@ -196,8 +496,8 @@ function buildCloudTrace(points, colorField, title, colorscale) {
         y: y,
         z: z,
         marker: {
-            size: 4,
-            opacity: 0.85,
+            size: CLOUD_POINT_SIZE,
+            opacity: CLOUD_POINT_OPACITY,
             color: color,
             colorscale: colorscale,
             colorbar: {
@@ -229,18 +529,34 @@ function buildPathTraces(points) {
 
     const startIndex = 0;
     const endIndex = x.length - 1;
+    const zOffset = z.map(function(value) {
+        return value + PATH_Z_OFFSET;
+    });
 
     return [
+        {
+            type: 'scatter3d',
+            mode: 'lines',
+            name: 'Path outline',
+            x: x,
+            y: y,
+            z: zOffset,
+            showlegend: false,
+            line: {
+                color: 'rgba(15, 23, 42, 0.45)',
+                width: PATH_LINE_OUTLINE_WIDTH
+            }
+        },
         {
             type: 'scatter3d',
             mode: 'lines',
             name: 'Path (replay)',
             x: x,
             y: y,
-            z: z,
+            z: zOffset,
             line: {
                 color: '#F28E2B',
-                width: 6
+                width: PATH_LINE_WIDTH
             }
         },
         {
@@ -249,10 +565,10 @@ function buildPathTraces(points) {
             name: 'Start',
             x: [x[startIndex]],
             y: [y[startIndex]],
-            z: [z[startIndex]],
+            z: [zOffset[startIndex]],
             marker: {
                 color: '#1D4ED8',
-                size: 7,
+                size: 8,
                 symbol: 'square'
             }
         },
@@ -262,10 +578,10 @@ function buildPathTraces(points) {
             name: 'End',
             x: [x[endIndex]],
             y: [y[endIndex]],
-            z: [z[endIndex]],
+            z: [zOffset[endIndex]],
             marker: {
                 color: '#DC2626',
-                size: 7,
+                size: 8,
                 symbol: 'square'
             }
         }
@@ -291,7 +607,8 @@ function buildCloudLayout(title) {
             xaxis: { title: 'X (m)', gridcolor: '#dbe2ea' },
             yaxis: { title: 'Y (m)', gridcolor: '#dbe2ea' },
             zaxis: { title: 'Z (m)', gridcolor: '#dbe2ea' },
-            aspectmode: 'data'
+            aspectmode: 'data',
+            camera: cameraFromMatplotlib(CAM_ELEV, CAM_AZIM, CAM_ROLL, CAM_DISTANCE)
         }
     };
 }
@@ -349,7 +666,8 @@ function buildLineLayout(title, yLabel) {
     };
 }
 
-async function fetchJson(path) {
+async function fetchJson(path, timeoutMs) {
+    const timeout = typeof timeoutMs === 'number' ? timeoutMs : 12000;
     const pageUrl = new URL(window.location.href);
     var basePath = pageUrl.pathname;
     var lastSegment = basePath.substring(basePath.lastIndexOf('/') + 1);
@@ -365,23 +683,35 @@ async function fetchJson(path) {
 
     const baseUrl = pageUrl.origin + basePath;
     const resolvedPath = new URL(path, baseUrl).toString();
-    const response = await fetch(resolvedPath, { cache: 'no-store' });
+    const controller = new AbortController();
+    const timer = setTimeout(function() {
+        controller.abort();
+    }, timeout);
+
+    let response;
+    try {
+        response = await fetch(resolvedPath, {
+            cache: 'no-store',
+            signal: controller.signal
+        });
+    } finally {
+        clearTimeout(timer);
+    }
+
     if (!response.ok) {
         throw new Error('Failed to fetch ' + resolvedPath + ' (' + response.status + ')');
     }
     return response.json();
 }
 
-async function resolvePlotDataSources() {
+async function resolvePlotManifest() {
     try {
-        const manifest = await fetchJson('data/manifest.json');
-        if (manifest && manifest.cloud && manifest.trajectories) {
-            return manifest;
-        }
+        const rawManifest = await fetchJson('data/manifest.json', 10000);
+        return normalizePlotManifest(rawManifest);
     } catch (error) {
         // Fallback to default filenames when manifest is not present.
     }
-    return DEFAULT_PLOT_DATA_FILES;
+    return normalizeLegacyManifest(DEFAULT_PLOT_DATA_FILES);
 }
 
 async function renderPlannerPlots() {
@@ -408,9 +738,19 @@ async function renderPlannerPlots() {
     setPlannerPlotsStatus('Loading plot data...', false);
 
     try {
-        const dataSources = await resolvePlotDataSources();
-        const cloudData = await fetchJson(dataSources.cloud);
-        const trajectoriesData = await fetchJson(dataSources.trajectories);
+        setPlannerPlotsStatus('Loading manifest...', false);
+        if (!plannerManifestCache) {
+            plannerManifestCache = await resolvePlotManifest();
+        }
+        ensurePlannerSelectors(plannerManifestCache);
+        const selected = selectedStudyAndExperiment(plannerManifestCache);
+        const dataSources = selected.experiment;
+        setPlannerExperimentSummary(selected.study, selected.experiment);
+
+        setPlannerPlotsStatus('Loading cloud data...', false);
+        const cloudData = await fetchJson(dataSources.cloud, 15000);
+        setPlannerPlotsStatus('Loading trajectory data...', false);
+        const trajectoriesData = await fetchJson(dataSources.trajectories, 15000);
 
         const cloudPoints = Array.isArray(cloudData.points) ? cloudData.points : [];
         const trajectories = Array.isArray(trajectoriesData.trajectories) ? trajectoriesData.trajectories : [];
@@ -441,6 +781,7 @@ async function renderPlannerPlots() {
 
         const costCloudTrace = buildCloudTrace(cloudPoints, 'color_cost', 'Cost', COST_COLOR_SCALE);
         const forceCloudTrace = buildCloudTrace(cloudPoints, 'color_force', 'Force', 'Plasma');
+        setPlannerPlotsStatus('Rendering plots...', false);
 
         await Plotly.newPlot(
             'plot-cost-cloud',
@@ -472,9 +813,16 @@ async function renderPlannerPlots() {
             PLOTLY_CONFIG
         );
 
-        setPlannerPlotsStatus('Plots loaded: cost cloud, force cloud, controls and velocities.', false);
+        setPlannerPlotsStatus('Plots loaded for "' + selected.experiment.label + '".', false);
     } catch (error) {
         console.error(error);
+        if (error && error.name === 'AbortError') {
+            setPlannerPlotsStatus(
+                'Could not load plots: request timeout while reading JSON files. Check GitHub Pages URL and data paths.',
+                true
+            );
+            return;
+        }
         if (error && error.name === 'TypeError') {
             setPlannerPlotsStatus(
                 'Could not load plots due to a network/fetch error. Make sure the page is served via http://localhost and not opened as a local file.',
@@ -487,6 +835,9 @@ async function renderPlannerPlots() {
 }
 
 function initPage() {
+    // Render plots first so optional UI scripts cannot block this section.
+    renderPlannerPlots();
+
     var options = {
 		slidesToScroll: 1,
 		slidesToShow: 1,
@@ -497,19 +848,24 @@ function initPage() {
     }
 
     // Initialize carousel only when library is available.
-    if (typeof bulmaCarousel !== 'undefined' && typeof bulmaCarousel.attach === 'function') {
-        bulmaCarousel.attach('.carousel', options);
-    }
+    try {
+        if (typeof bulmaCarousel !== 'undefined' && typeof bulmaCarousel.attach === 'function') {
+            bulmaCarousel.attach('.carousel', options);
+        }
 
-    if (typeof bulmaSlider !== 'undefined' && typeof bulmaSlider.attach === 'function') {
-        bulmaSlider.attach();
+        if (typeof bulmaSlider !== 'undefined' && typeof bulmaSlider.attach === 'function') {
+            bulmaSlider.attach();
+        }
+    } catch (error) {
+        console.error('Bulma components failed to initialize.', error);
     }
     
-    // Setup video autoplay for carousel
-    setupVideoCarouselAutoplay();
-
-    // Load interactive planning plots from JSON files.
-    renderPlannerPlots();
+    try {
+        // Setup video autoplay for carousel
+        setupVideoCarouselAutoplay();
+    } catch (error) {
+        console.error('Video carousel autoplay setup failed.', error);
+    }
 }
 
 if (typeof window.jQuery !== 'undefined') {

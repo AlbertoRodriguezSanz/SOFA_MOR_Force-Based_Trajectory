@@ -742,6 +742,56 @@ a:focus {
   margin-bottom: 0.75rem;
 }
 
+.planner-study-grid {
+  margin-top: 0.5rem;
+}
+
+.planner-study-card {
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem;
+  height: 100%;
+}
+
+.planner-study-card p {
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+}
+
+.planner-experiment-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.planner-control {
+  flex: 1 1 260px;
+}
+
+.planner-control label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.planner-select {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  color: var(--text-primary);
+}
+
+.planner-experiment-summary {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
 .planner-plots-status {
   color: var(--text-light);
   margin-bottom: 1rem;
@@ -792,6 +842,9 @@ a:focus {
   .planner-plot-canvas {
     height: 360px;
   }
-}
 
+  .planner-experiment-controls {
+    flex-direction: column;
+  }
+}
 
