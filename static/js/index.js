@@ -350,9 +350,24 @@ function buildLineLayout(title, yLabel) {
 }
 
 async function fetchJson(path) {
-    const response = await fetch(path, { cache: 'no-store' });
+    const pageUrl = new URL(window.location.href);
+    var basePath = pageUrl.pathname;
+    var lastSegment = basePath.substring(basePath.lastIndexOf('/') + 1);
+
+    // Normalize base path so relative fetches still work with/without trailing slash.
+    if (!basePath.endsWith('/')) {
+        if (lastSegment.indexOf('.') !== -1) {
+            basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+        } else {
+            basePath = basePath + '/';
+        }
+    }
+
+    const baseUrl = pageUrl.origin + basePath;
+    const resolvedPath = new URL(path, baseUrl).toString();
+    const response = await fetch(resolvedPath, { cache: 'no-store' });
     if (!response.ok) {
-        throw new Error('Failed to fetch ' + path + ' (' + response.status + ')');
+        throw new Error('Failed to fetch ' + resolvedPath + ' (' + response.status + ')');
     }
     return response.json();
 }
