@@ -105,6 +105,8 @@
   <script defer src="static/js/fontawesome.all.min.js"></script>
   
   <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <script defer src="static/js/index.js"></script>
   
   <!-- Structured Data for Academic Papers -->
@@ -369,6 +371,8 @@
               <p>
                 In this section, we show the impact of each parameter of the algorithm.
               </p>
+
+              
             </div>
             <!-- New image under abstract -->
             
@@ -512,6 +516,43 @@
             <p>
               The material response of the system shows a mostly lineal behavior when analyzing the equilibrium curve, which leds to use a lineal elastic model or the more complete Neo-Hookean hyperelastic constitutive model. Using 
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section planner-plots-section">
+        <div class="container is-max-desktop">
+          <h2 class="title is-2 has-text-centered">Interactive Planner Plots</h2>
+          <p class="has-text-centered planner-plots-subtitle">
+            Cost and force clouds with replay path, plus cable inputs and cable velocities over time.
+          </p>
+          <p id="planner-plots-status" class="has-text-centered planner-plots-status">Loading plots...</p>
+
+          <div class="columns is-multiline">
+            <div class="column is-half">
+              <article class="planner-plot-card">
+                <h3 class="title is-5 planner-plot-title">3D Cost Cloud + Replay Path</h3>
+                <div id="plot-cost-cloud" class="planner-plot-canvas" aria-label="3D cost cloud plot"></div>
+              </article>
+            </div>
+            <div class="column is-half">
+              <article class="planner-plot-card">
+                <h3 class="title is-5 planner-plot-title">3D Force Cloud + Replay Path</h3>
+                <div id="plot-force-cloud" class="planner-plot-canvas" aria-label="3D force cloud plot"></div>
+              </article>
+            </div>
+            <div class="column is-half">
+              <article class="planner-plot-card">
+                <h3 class="title is-5 planner-plot-title">Control Inputs</h3>
+                <div id="plot-controls" class="planner-plot-canvas" aria-label="Control input plot"></div>
+              </article>
+            </div>
+            <div class="column is-half">
+              <article class="planner-plot-card">
+                <h3 class="title is-5 planner-plot-title">Control Velocities</h3>
+                <div id="plot-velocities" class="planner-plot-canvas" aria-label="Control velocity plot"></div>
+              </article>
+            </div>
           </div>
         </div>
       </section>
