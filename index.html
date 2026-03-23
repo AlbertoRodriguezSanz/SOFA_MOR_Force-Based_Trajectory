@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- MathJax for LaTeX equation rendering -->
+    <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script
+    >
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
@@ -557,7 +566,11 @@
               </div>
             </div>
             <p>
-              The material response of the system shows a mostly lineal behavior when analyzing the equilibrium curve, which leds to use a lineal elastic model or the more complete Neo-Hookean hyperelastic constitutive model. Using 
+              The material response of the system shows a mostly lineal behavior when analyzing the equilibrium curve, which leds to use a lineal elastic model or the more complete Neo-Hookean hyperelastic constitutive model. Using a Sequential Model-Based Optimization (SMBO) strategy within the Optuna library, we calibrated the parameters of the SOFA digital twin to fit the experimental data, obtaining a good match between the simulated and experimental responses for the Neo-Hookean model. The optimization was carried out using this cost function: <span class="math-inline">\( f_c = \alpha \cdot \mathrm{error}_{\mathrm{force}} + \beta \cdot \mathrm{error}_{\theta} \)</span>, where $\alpha$ and $\beta$ are the weights assigned to the cable–force error and pitch–angle error, respectively. Pitch was weighted more strongly ($\alpha = 0.3$, $\beta = 1$) because angular measurements are less affected by cable friction and boundary effects than force readings, and therefore provide a more reliable indication of the global mechanical response. 
+            </p>
+
+            <p>
+              From the results obtained on the equilibrium curve at a displacement rate of 15 mm/s, we obtained a median Young's Modulus <span class="math-inline">$E = 2.3\ \mathrm{MPa}$</span> and a Poisson's ratio of <span class="math-inline">$\nu = 0.43$</span> for the Neo-Hookean model, which are consistent with values reported in the literature for similar thermoplastic polyurethane filaments.
             </p>
           </div>
         </div>
